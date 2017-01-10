@@ -15,6 +15,7 @@ class InternalCrawler
 
   def crawl
     results = pages.map do |page|
+      sleep 0.1
       crawl_each(page)
     end.flatten(1)
     write_csv(results)
@@ -24,13 +25,16 @@ class InternalCrawler
     html = html(page)
     scheme = URI.parse(page).scheme
     host = URI.parse(page).host
+    title = html.title
+    description = html.at('meta[name=description]')['content']
+    h1 = html.search('h1').inner_text
     html.search('a').map do |link|
       if link['href'] == '/'
-        [page, "#{scheme}://#{host}/"]
+        [page, title, description, h1, "#{scheme}://#{host}/"]
       elsif link['href'].start_with?('/')
-        [page, "#{scheme}://#{host}#{link['href']}"]
+        [page, title, description, h1, "#{scheme}://#{host}#{link['href']}"]
       elsif link['href'].include?(host)
-        [page, link['href']]
+        [page, title, description, h1, link['href']]
       end
     end.compact
   end
@@ -59,7 +63,7 @@ class InternalCrawler
 
   def write_csv(results)
     CSV.open('./result.csv', 'w') do |csv|
-      csv << %w(page internal_link)
+      csv << %w(page title description h1 internal_link)
       results.each do |result|
         csv << result
       end
