@@ -10,5 +10,7 @@ get_internal_links.batをclickで実行
 
 # Mac
 ```
+ruby -v
+gem install nokogiri
 ruby get_internal_links.rb
 ```
