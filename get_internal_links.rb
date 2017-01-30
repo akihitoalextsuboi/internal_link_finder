@@ -21,7 +21,8 @@ class InternalCrawler
       crawl_each(page)
     end.flatten(1)
     write_csv(results)
-    results
+    puts results
+    puts results.count
   end
 
   def crawl_each(page)
@@ -42,11 +43,11 @@ class InternalCrawler
     end.compact
   rescue OpenURI::HTTPError => e
     if e.message == '404 Not Found'
-      [page, e.message, e.message, e.message, e.message]
+      [[page, e.message, e.message, e.message, e.message]]
     elsif e.message == '403 Forbidden'
-      [page, e.message, e.message, e.message, e.message]
+      [[page, e.message, e.message, e.message, e.message]]
     else
-      [page, e.message, e.message, e.message, e.message]
+      [[page, e.message, e.message, e.message, e.message]]
     end
   end
 
